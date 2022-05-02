@@ -15,7 +15,7 @@ class OneCallAPI(Base):
     geocoder: Geocode = None
 
     def __post_init__(self):
-        self.endpoint = f"{self.base_url}/data/2.5/onecall?lat={self.geocoder.latitude}&lon={self.geocoder.longitude}&appid={self.api_key}&units=metric&exclude=minutely"
+        self.endpoint = f"{self._base_url}/data/2.5/onecall?lat={self.geocoder.latitude}&lon={self.geocoder.longitude}&appid={self._api_key}&units=metric&exclude=minutely"
 
     def get(self):
         logger.debug(f"Calling OneCallAPI endpoint to get weather data of latitude: {self.geocoder.latitude} and longitude: {self.geocoder.longitude}")
@@ -30,6 +30,7 @@ class OneCallAPI(Base):
 
         response = self.get()["current"]
         return CurrentWeatherData(
+            geocoder=self.geocoder,
             datetime=response["dt"],
             sunrise=response["sunrise"],
             sunset=response["sunset"],
