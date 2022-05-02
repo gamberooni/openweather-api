@@ -32,10 +32,16 @@ class CurrentWeatherData(WeatherData, Base):
     max_current_temperature: float = None
 
     def __post_init__(self):
-        self.endpoint = f"{self._base_url}/data/2.5/weather?lat={self.geocoder.latitude}&lon={self.geocoder.longitude}&appid={self._api_key}&units=metric"
+        self.endpoint = (
+            f"{self._base_url}/data/2.5/weather?lat={self.geocoder.latitude}"
+            f"&lon={self.geocoder.longitude}&appid={self._api_key}&units=metric"
+        )
 
     def get(self) -> CurrentWeatherData:
-        logger.debug(f"Calling current weather data endpoint to get weather data of latitude: {self.geocoder.latitude} and longitude: {self.geocoder.longitude}")
+        logger.debug(
+            "Calling current weather data endpoint to get weather data of latitude:"
+            f" {self.geocoder.latitude} and longitude: {self.geocoder.longitude}"
+        )
         response = requests.get(self.endpoint).json()
         return CurrentWeatherData(
             geocoder=self.geocoder,
@@ -51,8 +57,9 @@ class CurrentWeatherData(WeatherData, Base):
             wind_speed=response["wind"]["speed"],
             wind_degree=response["wind"]["deg"],
             cloudiness_pct=response["clouds"]["all"],
-            weather_description=response["weather"][0]["description"]
+            weather_description=response["weather"][0]["description"],
         )
+
 
 @dataclass
 class ForecastWeatherData(WeatherData):

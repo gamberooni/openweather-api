@@ -16,14 +16,20 @@ class Geocode(Base):
     longitude: float = None
 
     def __post_init__(self):
-        self.endpoint = f"{self._base_url}/geo/1.0/direct?q={self.city}, {self.country_code}&appid={self._api_key}"
+        self.endpoint = (
+            f"{self._base_url}/geo/1.0/direct?q={self.city},"
+            f" {self.country_code}&appid={self._api_key}"
+        )
 
     def get(self) -> Geocode:
-        logger.debug(f"Calling geocoding endpoint of city: {self.city} and country_code: {self.country_code}")
+        logger.debug(
+            f"Calling geocoding endpoint of city: {self.city} and country_code:"
+            f" {self.country_code}"
+        )
         response = requests.get(self.endpoint).json()[0]
         return Geocode(
             city=response["name"],
             country_code=response["country"],
             latitude=response["lat"],
-            longitude=response["lon"]
+            longitude=response["lon"],
         )
