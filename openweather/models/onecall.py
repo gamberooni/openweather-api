@@ -1,6 +1,11 @@
 from openweather.models.base import Base
 from openweather.models.geocode import Geocode
-from openweather.models.weather import CurrentWeatherData, DailyForecastWeatherData, DailyTemperature, HourlyForecastWeatherData
+from openweather.models.weather import (
+    CurrentWeatherData,
+    DailyForecastWeatherData,
+    DailyTemperature,
+    HourlyForecastWeatherData,
+)
 from dataclasses import dataclass
 from typing import Dict, List
 import requests
@@ -15,17 +20,24 @@ class OneCallAPI(Base):
     geocoder: Geocode = None
 
     def __post_init__(self):
-        self.endpoint = f"{self._base_url}/data/2.5/onecall?lat={self.geocoder.latitude}&lon={self.geocoder.longitude}&appid={self._api_key}&units=metric&exclude=minutely"
+        self.endpoint = (
+            f"{self._base_url}/data/2.5/onecall?lat={self.geocoder.latitude}"
+            f"&lon={self.geocoder.longitude}&appid={self._api_key}&units=metric&exclude=minutely"
+        )
 
     def get(self):
-        logger.debug(f"Calling OneCallAPI endpoint to get weather data of latitude: {self.geocoder.latitude} and longitude: {self.geocoder.longitude}")
+        logger.debug(
+            "Calling OneCallAPI endpoint to get weather data of latitude:"
+            f" {self.geocoder.latitude} and longitude: {self.geocoder.longitude}"
+        )
         response = requests.get(self.endpoint).json()
         return response
 
     def get_current(self) -> CurrentWeatherData:
 
         """
-        Get current weather data -- same as CurrentWeatherData.get() but min and max temp will be None
+        Get current weather data -- same as CurrentWeatherData.get() but min and max temp
+        will be None.
         """
 
         response = self.get()["current"]
@@ -41,7 +53,7 @@ class OneCallAPI(Base):
             wind_speed=response["wind_speed"],
             wind_degree=response["wind_deg"],
             cloudiness_pct=response["clouds"],
-            weather_description=response["weather"][0]["description"]
+            weather_description=response["weather"][0]["description"],
         )
 
     def _parse_daily(self, weather_data_dict: Dict) -> DailyForecastWeatherData:
@@ -53,13 +65,13 @@ class OneCallAPI(Base):
                 morning_temp=weather_data_dict["temp"]["morn"],
                 day_temp=weather_data_dict["temp"]["day"],
                 evening_temp=weather_data_dict["temp"]["eve"],
-                night_temp=weather_data_dict["temp"]["night"]
+                night_temp=weather_data_dict["temp"]["night"],
             ),
             feels_like_temperature=DailyTemperature(
                 morning_temp=weather_data_dict["feels_like"]["morn"],
                 day_temp=weather_data_dict["feels_like"]["day"],
                 evening_temp=weather_data_dict["feels_like"]["eve"],
-                night_temp=weather_data_dict["feels_like"]["night"]
+                night_temp=weather_data_dict["feels_like"]["night"],
             ),
             min_daily_temperature=weather_data_dict["temp"]["min"],
             max_daily_temperature=weather_data_dict["temp"]["max"],
@@ -71,7 +83,7 @@ class OneCallAPI(Base):
             weather_description=weather_data_dict["weather"][0]["description"],
             probability_of_precipitation=weather_data_dict["pop"],
             rain_volume=weather_data_dict["rain"],
-            uv_index=weather_data_dict["uvi"]
+            uv_index=weather_data_dict["uvi"],
         )
 
     def _parse_hourly(self, weather_data_dict: Dict) -> HourlyForecastWeatherData:
@@ -99,7 +111,8 @@ class OneCallAPI(Base):
         """
 
         response = self.get()["daily"]  # a list of dicts containing weather params
-        # map each elem in the list into a function that parses each of the kv pairs into a WeatherData object
+        # map each elem in the list into a function that parses each of the kv pairs
+        # into a WeatherData object
         return list(map(self._parse_daily, response))
 
     def get_hourly(self) -> List[HourlyForecastWeatherData]:

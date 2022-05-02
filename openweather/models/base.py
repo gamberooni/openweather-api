@@ -17,7 +17,7 @@ class Base(ABC):
         return asdict(self, dict_factory=self._dataclass_dict_factory)
 
     def _dataclass_dict_factory(self, data: dict) -> dict:
-        
+
         """
         Dict factory method for dataclasses asdict() to filter out sensitive fields
         """
