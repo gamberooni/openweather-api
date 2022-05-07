@@ -2,7 +2,8 @@ from openweather.models.onecall import OneCallAPI
 from openweather.models.geocode import Geocode
 from openweather.models.weather import CurrentWeatherData
 from openweather.models.air_pollution import (
-    CurrentAirPollutionData, FiveDayHourlyForecastedAirPollutionData
+    CurrentAirPollutionData,
+    FiveDayHourlyForecastedAirPollutionData,
 )
 import logging
 

@@ -33,14 +33,14 @@ class CurrentAirPollutionData(AirPollutionData, Base):
             f"&lon={self.geocoder.longitude}&appid={self._api_key}"
         )
 
-    def get(self) -> AirPollutionData:
+    def get(self) -> CurrentAirPollutionData:
         logger.debug(
             "Calling current air pollution data endpoint to get weather data of latitude:"
             f" {self.geocoder.latitude} and longitude: {self.geocoder.longitude}"
         )
         response = requests.get(self.endpoint).json()
         air_pollution_data = response["list"][0]
-        return AirPollutionData(
+        return CurrentAirPollutionData(
             geocoder=self.geocoder,
             datetime=air_pollution_data["dt"],
             air_quality_index=air_pollution_data["main"]["aqi"],
@@ -72,8 +72,10 @@ class FiveDayHourlyForecastedAirPollutionData(AirPollutionData, Base):
         five_day_air_pollution_data_list = response["list"]
         return list(map(self._parse_hourly, five_day_air_pollution_data_list))
 
-    def _parse_hourly(self, air_pollution_data_dict) -> AirPollutionData:
-        return AirPollutionData(
+    def _parse_hourly(
+        self, air_pollution_data_dict
+    ) -> FiveDayHourlyForecastedAirPollutionData:
+        return FiveDayHourlyForecastedAirPollutionData(
             geocoder=self.geocoder,
             datetime=air_pollution_data_dict["dt"],
             air_quality_index=air_pollution_data_dict["main"]["aqi"],
