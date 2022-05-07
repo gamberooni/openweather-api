@@ -9,3 +9,8 @@
 ## API docs
 
 https://openweathermap.org/api
+
+
+## Note
+1. Free plan limits One Call API limited to 1000 calls per day - 5 minutes once should be ok
+2. 60 calls per minute for current weather and air pollution data

@@ -20,7 +20,7 @@ def write_df_to_sqlite(
 ) -> None:
     rows_written = df.to_sql(table_name, engine, if_exists="append", index=False)
 
-    logger.info(f"{rows_written} rows written to {table_name} table")
+    logger.info(f"Written {rows_written} row(s) to {table_name} table")
 
 
 def fetch_data_and_write_to_db(
